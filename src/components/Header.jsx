@@ -74,6 +74,15 @@ export default function Header() {
     );
   }
   console.log(session);
+  {session?.user && (
+    <div>
+      <p>{session.user.name}</p>
+      <img src={session.user.image} alt={session.user.name} />
+    </div>
+  )}
+  console.log('Session:', session);
+  console.log('Image File URL:', imageFileUrl);
+  console.log('Caption:', caption);
   async function handleSubmit() {
     setPostUploading(true);
     const docRef = await addDoc(collection(db, 'posts'), {
@@ -126,12 +135,15 @@ export default function Header() {
               className='text-2xl cursor-pointer tranform hover:scale-125 transition duration-300 hover:text-red-600'
               onClick={() => setIsOpen(true)}
             />
-            <img
-              src={session.user.image}
-              alt={session.user.name}
-              className='h-10 w-10 rounded-full cursor-pointer'
-              onClick={signOut}
-            />
+            {session?.user?.name && <p>{String(session.user.name)}</p>}
+            {session?.user?.image && (
+              <img
+                src={session.user.image}
+                alt={session.user.name || 'User'}
+                className='h-10 w-10 rounded-full cursor-pointer'
+                onClick={signOut}
+              />
+            )}
           </div>
         ) : (
           <button
@@ -149,8 +161,9 @@ export default function Header() {
           onRequestClose={() => setIsOpen(false)}
           ariaHideApp={false}
         >
-          <div className='flex flex-col justify-center items-center h-[100%]'>
-            {selectedFile ? (
+          <div className='flex flex-col justify-center items-center h-[100%]'> 
+          {selectedFile ? (         
+            imageFileUrl && (
               <img
                 onClick={() => setSelectedFile(null)}
                 src={imageFileUrl}
@@ -159,12 +172,13 @@ export default function Header() {
                   imageFileUploading ? 'animate-pulse' : ''
                 }`}
               />
-            ) : (
-              <HiCamera
-                onClick={() => filePickerRef.current.click()}
-                className='text-5xl text-gray-400 cursor-pointer'
-              />
-            )}
+            )  
+          ) : (
+            <HiCamera
+              onClick={() => filePickerRef.current.click()}
+              className='text-5xl text-gray-400 cursor-pointer'
+            />
+          )}
             <input
               hidden
               ref={filePickerRef}
@@ -178,6 +192,7 @@ export default function Header() {
             maxLength='150'
             placeholder='Please enter you caption...'
             className='m-4 border-none text-center w-full focus:ring-0 outline-none'
+            value={caption}
             onChange={(e) => setCaption(e.target.value)}
           />
           <button
