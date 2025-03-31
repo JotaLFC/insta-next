@@ -12,16 +12,17 @@ import {
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { app } from '../firebase';
-import Moment from 'react-moment';
+import moment from 'moment';
 
 export default function CommentSection({ id }) {
   const { data: session } = useSession();
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const db = getFirestore(app);
+
   async function handleSubmit(e) {
     e.preventDefault();
-    // Add comment to firestore
+    // Add comment to Firestore
     const commentToPost = comment;
     setComment('');
     await addDoc(collection(db, 'posts', id, 'comments'), {
@@ -42,33 +43,40 @@ export default function CommentSection({ id }) {
         setComments(snapshot.docs);
       }
     );
-  }, [db]);
+  }, [db, id]);
 
   return (
     <div>
       {comments.length > 0 && (
         <div className='mx-10 max-h-24 overflow-y-scroll'>
-          {comments.map((comment, id) => (
-            <div
-              key={id}
-              className='flex items-center space-x-2 mb-2 justify-between'
-            >
-              <img
-                src={comment.data().userImage}
-                alt='userimage'
-                className='h-7 rounded-full object-cover border p-[2px]'
-              />
-              <p className='text-sm flex-1 truncate'>
-                <span className='font-bold text-gray-700'>
-                  {comment.data().username}
-                </span>{' '}
-                {comment.data().comment}
-              </p>
-              <Moment fromNow className='text-xs text-gray-400 pr-2'>
-                {comment.data().timestamp?.toDate()}
-              </Moment>
-            </div>
-          ))}
+          {comments.map((comment, id) => {
+            const commentData = comment.data();
+            const formattedDate = commentData.timestamp
+              ? moment(commentData.timestamp.toDate()).format(
+                  'MMMM Do YYYY, h:mm:ss a'
+                )
+              : 'Unknown date';
+
+            return (
+              <div
+                key={id}
+                className='flex items-center space-x-2 mb-2 justify-between'
+              >
+                <img
+                  src={commentData.userImage}
+                  alt='userimage'
+                  className='h-7 rounded-full object-cover border p-[2px]'
+                />
+                <p className='text-sm flex-1 truncate'>
+                  <span className='font-bold text-gray-700'>
+                    {commentData.username}
+                  </span>{' '}
+                  {commentData.comment}
+                </p>
+                <p className='text-xs text-gray-500'>{formattedDate}</p>
+              </div>
+            );
+          })}
         </div>
       )}
       {session && (
