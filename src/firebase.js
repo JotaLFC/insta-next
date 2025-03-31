@@ -6,12 +6,11 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "insta-next-inz.firebaseapp.com",
-  projectId: "insta-next-inz",
-  storageBucket: "insta-next-inz.firebasestorage.app",
-  messagingSenderId: "755538336338",
-  appId: "1:755538336338:web:56e69169b16c3870d19d8b",
-  measurementId: "G-FY6E4S09LM"
+  authDomain: "insta-next-v2.firebaseapp.com",
+  projectId: "insta-next-v2",
+  storageBucket: "insta-next-v2.appspot.com",
+  messagingSenderId: "971986010195",
+  appId: "1:971986010195:web:6d48fe4db9a0c1817606a6"
 };
 
 // Initialize Firebase
